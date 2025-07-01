@@ -21,7 +21,7 @@ const Logo: React.FC<LogoProps> = ({withDescription=false, withVersion=false }) 
             </Link>
             {
                 !withDescription && <p className="text-center text-gray-400 dark:text-white/60">
-                Manager vos cas d'assurance avec notre outil.
+                Restez en contact avec votre médécin.
             </p>
             }
             
