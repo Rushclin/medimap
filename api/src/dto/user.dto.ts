@@ -8,6 +8,8 @@ export class CreateUserDto {
   email: string;
   password: string;
   role?: UserRole;
+  latitude: number;
+  longitude: number;
 }
 
 // Mise à jour

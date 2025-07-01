@@ -1,27 +1,132 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql" // ou "mysql" selon votre base de données
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  name      String
-  email     String   @unique
-  password  String
-  role      UserRole @default(USER)
+  id           String     @id @default(uuid())
+  email        String     @unique
+  password     String
+  name         String
+  phone        String?
+  role UserRole @default(USER)
+  latitude     Float // Latitude de l'établissement
+  longitude    Float // Longitude de l'établissement // Pour stocker les coordonnées de l'utilisateur
+  searchRadius Int        @default(5000) // Rayon de recherche en mètres (par défaut 5km)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  favorites    Favorite[]
+
+}
+
+model HealthFacility {
+  id           String        @id @default(uuid())
+  type         FacilityType // PHARMACY ou HOSPITAL
+  name         String
+  address      String
+  city         String
+  postalCode   String
+  country      String        @default("France")
+  phone        String?
+  email        String?
+  website      String?
+  latitude     Float // Latitude de l'établissement
+  longitude    Float // Longitude de l'établissement  // Pour les coordonnées géographiques
+  openingHours OpeningHour[]
+  doctors      Doctor[]
+  stocks       Stock[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  favorites    Favorite[]
+}
+
+enum FacilityType {
+  PHARMACY
+  HOSPITAL
+}
+
+model OpeningHour {
+  id               String         @id @default(uuid())
+  healthFacility   HealthFacility @relation(fields: [healthFacilityId], references: [id])
+  healthFacilityId String
+  day              WeekDay
+  openTime         String // Format "HH:MM"
+  closeTime        String // Format "HH:MM"
+  isClosed         Boolean        @default(false)
+}
+
+enum WeekDay {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+  SUNDAY
 }
 
 enum UserRole {
   ADMIN
-  EDITOR  
   USER
+}
+
+model Doctor {
+  id               String               @id @default(uuid())
+  healthFacility   HealthFacility       @relation(fields: [healthFacilityId], references: [id])
+  healthFacilityId String
+  firstName        String
+  lastName         String
+  specialty        String
+  phone            String?
+  email            String?
+  availability     DoctorAvailability[]
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+}
+
+model DoctorAvailability {
+  id       String   @id @default(uuid())
+  doctor   Doctor   @relation(fields: [doctorId], references: [id])
+  doctorId String
+  date     DateTime // Date et heure de disponibilité
+  isBooked Boolean  @default(false)
+}
+
+model Medication {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  code        String? // Code CIP ou autre identifiant unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  stocks      Stock[]
+}
+
+model Stock {
+  id               String         @id @default(uuid())
+  healthFacility   HealthFacility @relation(fields: [healthFacilityId], references: [id])
+  healthFacilityId String
+  medication       Medication     @relation(fields: [medicationId], references: [id])
+  medicationId     String
+  quantity         Int            @default(0)
+  available        Boolean        @default(true)
+  lastRestocked    DateTime?
+  price            Float?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+}
+
+model Favorite {
+  id               String         @id @default(uuid())
+  user             User           @relation(fields: [userId], references: [id])
+  userId           String
+  healthFacility   HealthFacility @relation(fields: [healthFacilityId], references: [id])
+  healthFacilityId String
+  createdAt        DateTime       @default(now())
+
+  @@unique([userId, healthFacilityId])
 }

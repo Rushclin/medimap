@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { DocumentModule } from './modules/document/module';
-import { DomainModule } from './modules/domain/module';
-import { SubdomainModule } from './modules/subdomain/module';
+// import { DocumentModule } from './modules/document/module';
+// import { DomainModule } from './modules/domain/module';
+// import { SubdomainModule } from './modules/subdomain/module';
 import { UsersModule } from './modules/users/module';
 import { AuthModule } from './modules/auth/module';
 import { UploadModule } from './modules/upload/upload.module';
@@ -13,9 +13,9 @@ import configuration from './config/configuration';
     ConfigModule.forRoot({
       load: [configuration],
     }),
-    DocumentModule,
-    DomainModule,
-    SubdomainModule,
+    // DocumentModule,
+    // DomainModule,
+    // SubdomainModule,
     UsersModule,
     AuthModule,
     UploadModule,

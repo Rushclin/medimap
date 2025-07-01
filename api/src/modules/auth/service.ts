@@ -53,16 +53,23 @@ export class AuthService {
   }
 
   async register(registerUserDto: RegisterUserDto) {
-    const user = await this.usersService.create({
+    const createdUser = await this.usersService.create({
       ...registerUserDto,
+      latitude: 0,
+      longitude: 0
     });
 
-    if (!user) {
+    if (!createdUser) {
       throw new InternalServerErrorException(
         'Une erreur est survenue lors de la creation',
       );
     }
 
+    // Fetch the full user entity to ensure all required fields are present
+    const user = await this.usersService.findByEmail(createdUser.email);
+if(!user){
+  throw new UnauthorizedException('Invalid credentials');
+}
     // Send welcome email
     // await this.mailService.sendUserWelcome(user);
 
