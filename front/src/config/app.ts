@@ -1,5 +1,5 @@
-const  appConfig = {
-    name: "dd" as const,
+export const appConfig = {
+    appName: "Recherche scientifique" as const,
+    homeUrl: "/" as const,
+    description: "Découvrez notre plateforme où vous pouvez publier vos articles scientifiques librement" as const,
 }
-
-export default appConfig;
