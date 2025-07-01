@@ -1,0 +1,31 @@
+version: "3"
+name: r-scheintifique
+
+volumes:
+  postgres_r-scheintifique_data:
+    driver: local
+  filesupload_data:
+    driver: local
+
+services:
+  postgres:
+    image: postgres:13
+    volumes:
+      - postgres_r-scheintifique_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: r-scheintifique
+      POSTGRES_USER: r-scheintifique
+      POSTGRES_PASSWORD: password
+    ports:
+      - 5432:5432
+  filesuploadserver:
+    image: bytemark/webdav
+    volumes:
+      - filesupload_data:/var/lib/dav
+    environment:
+      AUTH_TYPE: Basic
+      USERNAME: r-scheintifique
+      PASSWORD: password
+      ANONYMOUS_METHODS: GET,OPTIONS,PROPFIND
+    ports:
+      - 9090:80

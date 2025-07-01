@@ -1,0 +1,65 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name      String
+  email     String   @unique
+  password  String
+  role      UserRole @default(USER)
+  documents Document[] 
+}
+
+model Document {
+  id          String     @id @default(uuid())
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  title       String
+  description String
+  content     String?    
+  url         String     
+  domainId    String
+  domain      Domain     @relation(fields: [domainId], references: [id])
+  subdomainId String?
+  subdomain   Subdomain? @relation(fields: [subdomainId], references: [id])
+  authorId    String
+  author      User       @relation(fields: [authorId], references: [id])
+}
+
+model Domain {
+  id          String      @id @default(uuid())
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  name        String
+  description String?
+  subdomains  Subdomain[] 
+  documents   Document[]  
+}
+
+model Subdomain {
+  id          String     @id @default(uuid())
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  name        String
+  description String?
+  domainId    String
+  domain      Domain     @relation(fields: [domainId], references: [id])
+  documents   Document[] 
+}
+
+enum UserRole {
+  ADMIN
+  EDITOR  
+  USER
+}
