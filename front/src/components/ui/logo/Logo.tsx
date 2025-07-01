@@ -13,9 +13,9 @@ const Logo: React.FC<LogoProps> = ({withDescription=false, withVersion=false }) 
         <div className="flex flex-col items-center max-w-xs">
             <Link href="/" className="block mb-4">
                 <Image
-                    width={231}
+                    width={131}
                     height={48}
-                    src="./images/logo/logo-sedgwick.svg"
+                    src="/favicon.png"
                     alt={appConfig.name}
                 />
             </Link>
