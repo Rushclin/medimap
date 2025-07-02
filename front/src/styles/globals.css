@@ -1,0 +1,51 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --primary-blue: #0070f3;
+  --secondary-green: #28a745;
+  --text-dark: #333;
+  --text-medium: #666;
+  --text-light: #999;
+  --bg-light: #f8fafd;
+  --bg-white: #ffffff;
+  --border-light: #eee;
+  --shadow-light: rgba(0, 0, 0, 0.05);
+  --shadow-medium: rgba(0, 0, 0, 0.1);
+}
+
+html, body {
+  padding: 0;
+  margin: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  line-height: 1.6;
+  font-size: 16px;
+  color: var(--text-dark);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--bg-light); /* Fond global très léger */
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0 0 0.8em 0;
+  color: var(--text-dark);
+  font-weight: 700;
+}
+
+p {
+  margin: 0 0 1em 0;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}

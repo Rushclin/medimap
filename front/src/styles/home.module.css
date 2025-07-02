@@ -1,0 +1,13 @@
+.container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.mainContent {
+  flex: 1; /* Permet au contenu principal de prendre l'espace restant */
+  width: 100%;
+  max-width: 1400px; /* Limite la largeur du contenu central */
+  margin: 0 auto; /* Centre le contenu */
+  padding: 0 20px; /* Padding latéral pour les écrans plus petits */
+}
