@@ -4,7 +4,7 @@ import {
   ConflictException,
 } from '@nestjs/common';
 // import { compare, hash } from 'bcrypt';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import { Prisma, UserRole } from '@prisma/client';
 import { UserMapper } from 'src/common/mappers';
 import { CreateUserDto, UpdateUserDto, UserPaginationDto } from 'src/dto';
@@ -50,7 +50,7 @@ export class UsersService {
     const where: Prisma.UserWhereInput = {};
     if (search) {
       where.OR = [
-        { name: { contains: search } },
+        { firstName: { contains: search } },
         { email: { contains: search } },
       ];
     }

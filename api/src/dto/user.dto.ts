@@ -4,7 +4,8 @@ import { IsOptional, IsString } from 'class-validator';
 
 // Création
 export class CreateUserDto {
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
   password: string;
   role?: UserRole;
@@ -22,7 +23,8 @@ export class UpdateUserDto {
 
 // Réponse
 export class UserDto extends BaseDto {
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
   role: UserRole;
 }

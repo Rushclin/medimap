@@ -4,7 +4,7 @@ import { Module } from '@nestjs/common';
 // import { SubdomainModule } from './modules/subdomain/module';
 import { UsersModule } from './modules/users/module';
 import { AuthModule } from './modules/auth/module';
-import { UploadModule } from './modules/upload/upload.module';
+// import { UploadModule } from './modules/upload/upload.module';
 import { ConfigModule } from '@nestjs/config';
 import configuration from './config/configuration';
 
@@ -18,7 +18,7 @@ import configuration from './config/configuration';
     // SubdomainModule,
     UsersModule,
     AuthModule,
-    UploadModule,
+    // UploadModule,
   ],
   // providers: [AppService],
 })

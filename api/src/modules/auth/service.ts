@@ -4,7 +4,7 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 // import { JwtService } from '@nestjs/jwt';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 // import { ConfigService } from '@nestjs/config';
 import { LoginUserDto } from 'src/dto';
 import { UsersService } from '../users/service';
@@ -56,7 +56,7 @@ export class AuthService {
     const createdUser = await this.usersService.create({
       ...registerUserDto,
       latitude: 0,
-      longitude: 0
+      longitude: 0,
     });
 
     if (!createdUser) {

@@ -1,10 +1,10 @@
-import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
-import { FilesService } from './files.service';
+// import { Module } from '@nestjs/common';
+// import { ConfigModule } from '@nestjs/config';
+// import { FilesService } from './files.service';
 
-@Module({
-  imports: [ConfigModule],
-  exports: [FilesService],
-  providers: [FilesService],
-})
-export class FilesModule {}
+// @Module({
+//   imports: [ConfigModule],
+//   exports: [FilesService],
+//   providers: [FilesService],
+// })
+// export class FilesModule {}

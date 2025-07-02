@@ -1,4 +1,4 @@
-import appConfig from '@/config/app';
+import { appConfig } from '@/config/app';
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react'
@@ -15,8 +15,8 @@ const Logo: React.FC<LogoProps> = ({withDescription=false, withVersion=false }) 
                 <Image
                     width={131}
                     height={48}
-                    src="/favicon.png"
-                    alt={appConfig.name}
+                    src="/favicon.jpeg"
+                    alt={appConfig.appName}
                 />
             </Link>
             {

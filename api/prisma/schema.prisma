@@ -11,16 +11,17 @@ model User {
   id           String     @id @default(uuid())
   email        String     @unique
   password     String
-  name         String
+  firstName    String
+  lastName     String
   phone        String?
-  role UserRole @default(USER)
-  latitude     Float // Latitude de l'établissement
-  longitude    Float // Longitude de l'établissement // Pour stocker les coordonnées de l'utilisateur
-  searchRadius Int        @default(5000) // Rayon de recherche en mètres (par défaut 5km)
+  terms        Boolean    @default(true)
+  role         UserRole   @default(USER)
+  latitude     Float 
+  longitude    Float 
+  searchRadius Int        @default(5000) 
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
   favorites    Favorite[]
-
 }
 
 model HealthFacility {
@@ -34,8 +35,8 @@ model HealthFacility {
   phone        String?
   email        String?
   website      String?
-  latitude     Float // Latitude de l'établissement
-  longitude    Float // Longitude de l'établissement  // Pour les coordonnées géographiques
+  latitude     Float 
+  longitude    Float 
   openingHours OpeningHour[]
   doctors      Doctor[]
   stocks       Stock[]

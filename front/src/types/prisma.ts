@@ -1,5 +1,5 @@
 // Types de base correspondant à votre schéma Prisma
-export type UserRole = 'ADMIN' | 'EDITOR' | 'USER';
+export type UserRole = 'ADMIN' | 'USER';
 
 export interface BaseEntity {
   id: string;
@@ -8,9 +8,14 @@ export interface BaseEntity {
 }
 
 export interface User extends BaseEntity {
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
   role?: UserRole;
+  phone?: string;
+  latitude?: number;
+  longitude?: number;
+  searchRadius?: number;
   // Ne pas inclure le mot de passe dans les types frontend
 }
 
