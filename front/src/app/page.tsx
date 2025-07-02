@@ -1,168 +1,170 @@
-// 'use client'
-// import React, { useEffect, useState } from 'react';
-// import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
-// import Input from '@/components/form/input/InputField';
-// import Logo from '@/components/ui/logo/Logo';
-// import Badge from '@/components/ui/badge/Badge';
-// import { axiosInstance } from '@/config/axios';
-// import { Facility } from '@/types';
-
-// const defaultCenter = {
-//     lat: 48.8566, // Paris
-//     lng: 2.3522
-// };
-
-// const GoogleMapComponent = () => {
-//     const [userPosition, setUserPosition] = useState<google.maps.LatLngLiteral | null>(null);
-//     const [loading, setLoading] = useState(true);
-//     const [error, setError] = useState<string | null>(null);
-//     const [facilities, setFacilitis] = useState<Facility[]>([])
-
-//     useEffect(() => {
-//         axiosInstance.get("/facilities").then(({ data }) => {
-
-//             console.log({ data })
-//             setFacilitis(data)
-//         }).catch(err => {
-//             console.error(err)
-//         })
-//     }, [])
-
-//     useEffect(() => {
-//         if (navigator.geolocation) {
-//             navigator.geolocation.getCurrentPosition(
-//                 (position) => {
-//                     setUserPosition({
-//                         lat: position.coords.latitude,
-//                         lng: position.coords.longitude
-//                     });
-//                     setLoading(false);
-//                 },
-//                 (err) => {
-//                     setError(err.message);
-//                     setLoading(false);
-//                     console.error("Erreur de géolocalisation:", err);
-//                 },
-//                 {
-//                     enableHighAccuracy: true,
-//                     timeout: 5000,
-//                     maximumAge: 0
-//                 }
-//             );
-//         } else {
-//             setError("La géolocalisation n'est pas supportée par votre navigateur");
-//             setLoading(false);
-//         }
-//     }, []);
-
-//     if (loading) {
-//         return <div className="h-[400px] flex items-center justify-center">Chargement de la position...</div>;
-//     }
-
-//     if (error) {
-//         return (
-//             <div className="h-[400px] flex items-center justify-center text-red-500">
-//                 Erreur: {error}. Affichage de la carte avec position par défaut.
-//             </div>
-//         );
-//     }
-
-//     console.log({ userPosition })
-
-//     return (
-//         <div className='m-5'>
-//             <LoadScript googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ""}>
-//                 <div className='my-5'>
-//                     <div className='flex justify-center my-4'>
-//                         <Logo />
-//                     </div>
-//                     <div className="sm:col-span-1">
-//                         <Input
-//                             type="text"
-//                             placeholder="Effectuez une recherche de pharmacie ou d'hopital"
-//                         />
-//                     </div>
-//                 </div>
-//                 <div className='flex flex-col md:flex-row gap-4'>
-//                     {
-//                         facilities.map((facility) => (
-//                             <div className='w-full md:w-1/4 lg:w-2/5 bg-gray-50  rounded-lg'>
-
-//                                 <div className='border p-4 rounded-sm cursor-pointer hover:border-blue-600 transition-all'>
-//                                     <div className='flex justify-between w-full'>
-//                                         <div className='text-slate-800 text-sm'>{facility.name}</div>
-//                                         <div className='text-slate-500'>3km</div>
-//                                     </div>
-//                                     <div className='flex justify-between w-full'>
-//                                         <div className='text-slate-700 text-xs'>{facility.address}</div>
-//                                         <div className='text-slate-500 text-xs'>
-//                                             4.5 de notation
-//                                         </div>
-//                                     </div>
-//                                     <div className='mt-3'>
-//                                         <Badge color='success'>Ouvert</Badge>
-//                                     </div>
-//                                 </div>
-//                             </div>
-//                         ))
-//                     }
-
-
-//                     <div className='w-full md:w-3/4 lg:w-4/5'>
-//                         <GoogleMap
-//                             mapContainerStyle={{
-//                                 width: '100%',
-//                                 height: '500px', // Hauteur ajustable
-//                                 borderRadius: '8px',
-//                                 boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-//                             }}
-//                             center={userPosition || defaultCenter}
-//                             zoom={15}
-//                         >
-//                             {userPosition && (
-//                                 <Marker
-//                                     position={userPosition}
-//                                     title="Votre position"
-//                                 />
-//                             )}
-//                         </GoogleMap>
-//                     </div>
-//                 </div>
-
-//             </LoadScript>
-//         </div>
-
-//     );
-// };
-
-// export default GoogleMapComponent;
-
-
-
 
 
 'use client'
-import React, { useEffect, useState, useCallback } from 'react';
-import { GoogleMap, LoadScript, Marker, DirectionsService, DirectionsRenderer } from '@react-google-maps/api';
+import React, { useEffect, useState, useRef } from 'react';
+import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 import Input from '@/components/form/input/InputField';
 import Logo from '@/components/ui/logo/Logo';
 import Badge from '@/components/ui/badge/Badge';
 import { axiosInstance } from '@/config/axios';
 import { Facility } from '@/types';
 
-const defaultCenter = {
-    lat: 48.8566,
-    lng: 2.3522
+
+import {Locate, Search} from "lucide-react"
+
+
+
+const SearchComponent = ({ 
+  onSearch,
+  onNearbySearch 
+}: {
+  onSearch: (query: string) => void;
+  onNearbySearch: (query: string, userPos: { lat: number; lng: number }) => void;
+}) => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [userPosition, setUserPosition] = useState<{ lat: number; lng: number } | null>(null);
+  const [isNearby, setIsNearby] = useState(false);
+
+  // Récupérer la position de l'utilisateur
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setUserPosition({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          });
+        },
+        (error) => {
+          console.error("Erreur de géolocalisation:", error);
+          setIsNearby(false); // Désactiver la recherche proche si la géoloc échoue
+        }
+      );
+    }
+  }, []);
+
+  const handleSearch = () => {
+    if (isNearby && userPosition) {
+      onNearbySearch(searchQuery, userPosition);
+    } else {
+      onSearch(searchQuery);
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
+
+  return (
+    <div className="sm:col-span-1 relative">
+      <Input
+        type="text"
+        placeholder="Effectuez une recherche de pharmacie ou d'hôpital"
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        onKeyPress={handleKeyPress}
+        className="pr-12" // Ajouter du padding pour le bouton
+      />
+      <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex space-x-1">
+        <button
+          onClick={() => {
+            setIsNearby(!isNearby);
+            handleSearch();
+          }}
+          className={`p-2 rounded-md ${isNearby ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
+          title={isNearby ? "Recherche proche activée" : "Rechercher près de moi"}
+          disabled={!userPosition && isNearby}
+        >
+          <Locate />
+        </button>
+        <button
+          onClick={handleSearch}
+          className="bg-blue-500 text-white p-2 rounded-md"
+          title="Lancer la recherche"
+        >
+          <Search />
+        </button>
+      </div>
+    </div>
+  );
 };
 
+
+
+
+
+
+
+
+
+// Configuration des icônes personnalisées
+const userIcon = new L.Icon({
+  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+});
+
+const pharmacyIcon = new L.Icon({
+  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+});
+
+const hospitalIcon = new L.Icon({
+  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+});
+
+// Composant pour centrer la carte sur une position
+function CenterMap({ position }: { position: [number, number] }) {
+  const map = useMap();
+  map.setView(position, 15);
+  return null;
+}
+
+// Composant pour afficher l'itinéraire
+function Routing({ from, to }: { from: [number, number], to: [number, number] }) {
+  const [route, setRoute] = useState<[number, number][]>([]);
+
+  useEffect(() => {
+    // Utilisation d'OSRM pour le calcul d'itinéraire (gratuit)
+    fetch(`https://router.project-osrm.org/route/v1/driving/${from[1]},${from[0]};${to[1]},${to[0]}?overview=full&geometries=geojson`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.routes && data.routes[0]) {
+          setRoute(data.routes[0].geometry.coordinates.map((coord: [number, number]) => [coord[1], coord[0]]));
+        }
+      })
+      .catch(err => console.error('Erreur de calcul de route:', err));
+  }, [from, to]);
+
+  return route.length > 0 ? (
+    <Polyline 
+      positions={route} 
+      color="blue"
+      weight={5}
+    />
+  ) : null;
+}
+
 const GoogleMapComponent = () => {
-    const [userPosition, setUserPosition] = useState<google.maps.LatLngLiteral | null>(null);
+    const [userPosition, setUserPosition] = useState<[number, number] | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [facilities, setFacilities] = useState<Facility[]>([]);
+    // const [facilities, setFacilities] = useState<Facility[]>([]);
+     const [facilities, setFacilities] = useState<Facility[]>([]);
+  const [filteredFacilities, setFilteredFacilities] = useState<Facility[]>([]);
+
     const [selectedFacility, setSelectedFacility] = useState<Facility | null>(null);
-    const [directions, setDirections] = useState<google.maps.DirectionsResult | null>(null);
-    const [map, setMap] = useState<google.maps.Map | null>(null);
+    const mapRef = useRef<L.Map>(null);
 
     // Chargement des établissements
     useEffect(() => {
@@ -178,10 +180,7 @@ const GoogleMapComponent = () => {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
-                    setUserPosition({
-                        lat: position.coords.latitude,
-                        lng: position.coords.longitude
-                    });
+                    setUserPosition([position.coords.latitude, position.coords.longitude]);
                     setLoading(false);
                 },
                 (err) => {
@@ -201,41 +200,12 @@ const GoogleMapComponent = () => {
         }
     }, []);
 
-    // Calcul de l'itinéraire quand un établissement est sélectionné
-    useEffect(() => {
-        if (selectedFacility && userPosition && map) {
-            const directionsService = new google.maps.DirectionsService();
-            
-            directionsService.route(
-                {
-                    origin: userPosition,
-                    destination: {
-                        lat: selectedFacility.latitude,
-                        lng: selectedFacility.longitude
-                    },
-                    travelMode: google.maps.TravelMode.DRIVING,
-                },
-                (result, status) => {
-                    if (status === google.maps.DirectionsStatus.OK) {
-                        setDirections(result);
-                    } else {
-                        console.error(`Erreur lors du calcul de l'itinéraire: ${status}`);
-                    }
-                }
-            );
-        }
-    }, [selectedFacility, userPosition, map]);
-
-
-    console.log({userPosition})
-    
-    const handleFacilityClick = useCallback((facility: Facility) => {
+    const handleFacilityClick = (facility: Facility) => {
         setSelectedFacility(facility);
-    }, []);
-
-    const onMapLoad = useCallback((map: google.maps.Map) => {
-        setMap(map);
-    }, []);
+        if (mapRef.current) {
+            mapRef.current.flyTo([facility.latitude, facility.longitude], 15);
+        }
+    };
 
     if (loading) {
         return <div className="h-[400px] flex items-center justify-center">Chargement de la position...</div>;
@@ -249,111 +219,137 @@ const GoogleMapComponent = () => {
         );
     }
 
+     const handleSearch = (query: string) => {
+    if (!query) {
+      setFilteredFacilities(facilities);
+      return;
+    }
+    const results = facilities.filter(facility => 
+      facility.name.toLowerCase().includes(query.toLowerCase()) ||
+      facility.address.toLowerCase().includes(query.toLowerCase())
+    );
+    setFilteredFacilities(results);
+  };
+
+  // Fonction de recherche proche
+  const handleNearbySearch = (query: string, userPos: { lat: number; lng: number }) => {
+    let results = [...facilities];
+    
+    // Filtre par texte si query existe
+    if (query) {
+      results = results.filter(facility => 
+        facility.name.toLowerCase().includes(query.toLowerCase()) ||
+        facility.address.toLowerCase().includes(query.toLowerCase())
+      );
+    }
+    
+    // Tri par distance
+    results = results
+      .map(facility => ({
+        ...facility,
+        distance: calculateDistance(
+          userPos.lat,
+          userPos.lng,
+          facility.latitude,
+          facility.longitude
+        )
+      }))
+      .sort((a, b) => a.distance - b.distance)
+      .slice(0, 20); // Limiter aux 20 plus proches
+    
+    setFilteredFacilities(results);
+  };
+
+
     return (
         <div className='m-5'>
-            <LoadScript 
-                googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ""}
-                libraries={['places']}
-            >
-                <div className='my-5'>
-                    <div className='flex justify-center my-4'>
-                        <Logo />
-                    </div>
-                    <div className="sm:col-span-1">
-                        <Input
-                            type="text"
-                            placeholder="Effectuez une recherche de pharmacie ou d'hopital"
-                        />
-                    </div>
+            <div className='my-5'>
+                <div className='flex justify-center my-4'>
+                    <Logo />
                 </div>
-                <div className='flex flex-col md:flex-row gap-4'>
-                    <div className='w-full md:w-1/4 lg:w-2/5 bg-gray-50 rounded-lg max-h-[500px] overflow-y-auto'>
-                        {facilities.map((facility) => (
-                            <div 
-                                key={facility.id}
-                                className={`border p-4 rounded-sm cursor-pointer hover:border-blue-600 transition-all ${selectedFacility?.id === facility.id ? 'border-blue-600 bg-blue-50' : ''}`}
-                                onClick={() => handleFacilityClick(facility)}
-                            >
-                                <div className='flex justify-between w-full'>
-                                    <div className='text-slate-800 text-sm font-medium'>{facility.name}</div>
-                                    <div className='text-slate-500'>
-                                        {userPosition && (
-                                            `${calculateDistance(
-                                                userPosition.lat,
-                                                userPosition.lng,
-                                                facility.latitude,
-                                                facility.longitude
-                                            ).toFixed(1)} km`
-                                        )}
-                                    </div>
-                                </div>
-                                <div className='flex justify-between w-full mt-1'>
-                                    <div className='text-slate-700 text-xs'>{facility.address}</div>
-                                    <div className='text-slate-500 text-xs'>
-                                        4.5 ★
-                                    </div>
-                                </div>
-                                <div className='mt-3'>
-                                    <Badge color='success'>Ouvert</Badge>
+                {/* <div className="sm:col-span-1">
+                    <Input
+                        type="text"
+                        placeholder="Effectuez une recherche de pharmacie ou d'hopital"
+                    />
+                </div> */}
+                 <SearchComponent 
+          onSearch={handleSearch}
+          onNearbySearch={handleNearbySearch}
+        />
+            </div>
+            <div className='flex flex-col md:flex-row gap-4'>
+                <div className='w-full md:w-1/4 lg:w-2/5 bg-gray-50 rounded-lg max-h-[500px] overflow-y-auto'>
+                    {facilities.map((facility) => (
+                        <div 
+                            key={facility.id}
+                            className={`border p-4 rounded-sm cursor-pointer hover:border-blue-600 transition-all ${selectedFacility?.id === facility.id ? 'border-blue-600 bg-blue-50' : ''}`}
+                            onClick={() => handleFacilityClick(facility)}
+                        >
+                            <div className='flex justify-between w-full'>
+                                <div className='text-slate-800 text-sm font-medium'>{facility.name}</div>
+                                <div className='text-slate-500'>
+                                    {userPosition && (
+                                        `${calculateDistance(
+                                            userPosition[0],
+                                            userPosition[1],
+                                            facility.latitude,
+                                            facility.longitude
+                                        ).toFixed(1)} km`
+                                    )}
                                 </div>
                             </div>
-                        ))}
-                    </div>
+                            <div className='flex justify-between w-full mt-1'>
+                                <div className='text-slate-700 text-xs'>{facility.address}</div>
+                                <div className='text-slate-500 text-xs'>
+                                    4.5 ★
+                                </div>
+                            </div>
+                            <div className='mt-3'>
+                                <Badge color='success'>Ouvert</Badge>
+                            </div>
+                        </div>
+                    ))}
+                </div>
 
-                    <div className='w-full md:w-3/4 lg:w-4/5'>
-                        <GoogleMap
-                            mapContainerStyle={{
-                                width: '100%',
-                                height: '500px',
-                                borderRadius: '8px',
-                                boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-                            }}
-                            center={userPosition || defaultCenter}
+                <div className='w-full md:w-3/4 lg:w-4/5 h-[500px] rounded-lg shadow-md'>
+                    {userPosition && (
+                        <MapContainer
+                            center={userPosition}
                             zoom={15}
-                            onLoad={onMapLoad}
+                            style={{ height: '100%', width: '100%', borderRadius: '8px' }}
+                            ref={mapRef}
                         >
-                            {userPosition && (
-                                <Marker
-                                    position={userPosition}
-                                    title="Votre position"
-                                    icon={{
-                                        url: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png"
-                                    }}
-                                />
-                            )}
+                            <TileLayer
+                                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                            />
+                            <CenterMap position={userPosition} />
+                            
+                            <Marker position={userPosition} icon={userIcon}>
+                                <Popup>Votre position</Popup>
+                            </Marker>
 
                             {facilities.map((facility) => (
                                 <Marker
                                     key={facility.id}
-                                    position={{
-                                        lat: facility.latitude,
-                                        lng: facility.longitude
-                                    }}
-                                    title={facility.name}
-                                    icon={{
-                                        url: facility.type === 'PHARMACY' 
-                                            ? "https://maps.google.com/mapfiles/ms/icons/green-dot.png"
-                                            : "https://maps.google.com/mapfiles/ms/icons/red-dot.png",
-                                    }}
-                                />
+                                    position={[facility.latitude, facility.longitude]}
+                                    icon={facility.type === 'PHARMACY' ? pharmacyIcon : hospitalIcon}
+                                >
+                                    <Popup>{facility.name}</Popup>
+                                </Marker>
                             ))}
 
-                            {directions && (
-                                <DirectionsRenderer
-                                    directions={directions}
-                                    options={{
-                                        polylineOptions: {
-                                            strokeColor: "#3b82f6",
-                                            strokeWeight: 5,
-                                        },
-                                        suppressMarkers: true,
-                                    }}
+                            {selectedFacility && userPosition && (
+                                <Routing 
+                                    from={userPosition} 
+                                    to={[selectedFacility.latitude, selectedFacility.longitude]} 
                                 />
                             )}
-                        </GoogleMap>
-                    </div>
+                        </MapContainer>
+                    )}
                 </div>
-            </LoadScript>
+            </div>
         </div>
     );
 };
