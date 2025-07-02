@@ -1,4 +1,4 @@
-"use client"; // Pour le menu déroulant ou d'autres interactivités futures si besoin
+"use client";
 
 import React from 'react';
 import Link from 'next/link';
@@ -10,7 +10,6 @@ const Header: React.FC = () => {
     <header className={styles.header}>
       <div className={styles.logoContainer}>
         <Link href="/">
-          {/* Le logo doit être dans le dossier public/ */}
           <Image src="/medimap-logo.svg" alt="Medimap Logo" width={150} height={40} priority />
         </Link>
       </div>

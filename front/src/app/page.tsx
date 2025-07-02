@@ -10,14 +10,12 @@ import styles from '../styles/home.module.css'; // Styles spécifiques à la pag
 export default function HomePage() {
   return (
     <div className={styles.container}>
-      {/* Pas de <Head> ici, c'est géré par layout.tsx ou metadata */}
       <main className={styles.mainContent}>
         <HeroSection />
         <HowItWorksSection />
         <WhyMedimapSection />
         <CallToActionSection />
       </main>
-      {/* Le Footer est géré par layout.tsx */}
     </div>
   );
 }

@@ -1,6 +1,6 @@
 .inputField {
   flex: 1;
-  padding: 1rem 1.4rem;
+  padding: 1.1rem 1.5rem; /* Légèrement plus de padding */
   border: 1px solid var(--border-light);
   border-radius: 8px;
   font-size: 1.1rem;
@@ -8,6 +8,7 @@
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
   background-color: var(--bg-white);
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+  width: 100%; /* S'assure qu'il prend l'espace disponible */
 }
 
 .inputField:focus {
@@ -19,20 +20,18 @@
 .primaryButton {
   background-color: var(--primary-blue);
   color: white;
-  padding: 1rem 2.2rem;
+  padding: 1.1rem 2.5rem; /* Plus généreux */
   border: none;
   border-radius: 8px;
-  font-size: 1.1rem;
+  font-size: 1.15rem; /* Un peu plus grand */
   font-weight: 600;
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-  box-shadow: 0 4px 10px rgba(0, 112, 243, 0.2);
+  box-shadow: 0 5px 15px var(--shadow-strong-blue); /* Ombre plus visible */
 }
 
 .primaryButton:hover {
   background-color: #005bb5;
   transform: translateY(-3px);
-  box-shadow: 0 6px 15px rgba(0, 112, 243, 0.3);
+  box-shadow: 0 6px 18px var(--shadow-strong-blue);
 }
-
-/* Vous pouvez ajouter d'autres styles UI ici, comme Card, SecondaryButton, etc. */
