@@ -1,12 +1,21 @@
-// front/src/app/page.tsx (SUR LA BRANCHE MAIN - sera écrasé plus tard par ta landing page)
-"use client"; // Nécessaire si tu as des redirections ou du client-side JS
+"use client"; // Indique que ce composant est un client component, nécessaire pour l'interactivité
 
-export default function TemporaryHomePage() {
+import HeroSection from '../components/sections/HeroSection';
+import HowItWorksSection from '../components/sections/HowItWorksSection';
+import WhyMedimapSection from '../components/sections/WhyMedimapSection';
+import CallToActionSection from '../components/sections/CallToActionSection';
+
+import styles from '../styles/home.module.css'; // Styles spécifiques à la page Home
+
+export default function HomePage() {
   return (
-    <div>
-      <h1>Page principale temporaire de la branche main</h1>
-      <p>Cette page sera remplacée par la landing page.</p>
-      <a href="/map">Aller à la carte</a> {/* Lien pour tester */}
+    <div className={styles.container}>
+      <main className={styles.mainContent}>
+        <HeroSection />
+        <HowItWorksSection />
+        <WhyMedimapSection />
+        <CallToActionSection />
+      </main>
     </div>
   );
 }

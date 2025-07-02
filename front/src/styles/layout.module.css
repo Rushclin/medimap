@@ -1,0 +1,149 @@
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.2rem 5%; /* Padding relatif */
+  background-color: var(--bg-white);
+  box-shadow: 0 4px 15px var(--shadow-light);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.logoContainer {
+  display: flex;
+  align-items: center;
+}
+
+.navbarNav {
+  display: flex; /* S'assure que les liens sont en ligne */
+}
+
+.navLink {
+  color: var(--text-medium);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 1.05rem; /* Un peu plus grand */
+  margin-left: 2rem; /* Plus d'espace */
+  transition: color 0.3s ease;
+}
+
+.navLink:hover {
+  color: var(--primary-blue);
+}
+
+.actionButton {
+  background-color: var(--primary-blue);
+  color: white;
+  padding: 0.8rem 1.8rem; /* Plus généreux */
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.05rem; /* Taille de police */
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 4px 10px var(--shadow-strong-blue); /* Ombre bleue */
+}
+
+.actionButton:hover {
+  background-color: #005bb5;
+  transform: translateY(-2px);
+}
+
+/* Footer */
+.footer {
+  background-color: var(--bg-dark-footer); /* Couleur foncée */
+  color: var(--text-white);
+  padding: 3.5rem 5%; /* Plus de padding */
+  font-size: 0.95em; /* Légèrement plus grand */
+  line-height: 1.8;
+  margin-top: 4rem; /* Espace après la dernière section */
+}
+
+.footerContent {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 2.8rem; /* Plus d'espace */
+  max-width: 1200px;
+  margin: 0 auto 2.8rem auto;
+  padding-bottom: 2.5rem;
+  border-bottom: 1px solid #34495e;
+}
+
+.footerSection h3 {
+  color: var(--primary-blue); /* Titres en bleu */
+  margin-bottom: 1.2rem;
+  font-size: 1.15em; /* Plus grand */
+}
+
+.footerDescription {
+  color: #bdc3c7; /* Gris clair pour la description */
+  margin-top: 1rem;
+}
+
+.footerSection ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footerSection ul li {
+  margin-bottom: 0.7rem; /* Plus d'espace entre les liens */
+}
+
+.footerLink {
+  color: var(--text-white);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.footerLink:hover {
+  color: var(--primary-blue);
+}
+
+.socialLinks {
+  margin-top: 1.5rem;
+  display: flex;
+  gap: 1.2rem; /* Plus d'espace entre les icônes */
+}
+
+.socialLinks a {
+  color: var(--text-white);
+  font-size: 1.5em; /* Plus grandes */
+  transition: color 0.3s ease;
+}
+
+.socialLinks a:hover {
+  color: var(--primary-blue);
+}
+
+.footerBottom {
+  text-align: center;
+  margin-top: 2rem;
+  color: #bdc3c7;
+}
+
+/* Media Queries for responsiveness */
+@media (max-width: 992px) {
+  .header {
+    flex-direction: column;
+    padding: 1rem 5%;
+    gap: 1rem;
+  }
+  .navbarNav {
+    display: none; /* Cache la nav sur mobile pour une landing page simple, ou implémente un menu hamburger */
+  }
+  .actionButton {
+    padding: 0.7rem 1.4rem;
+  }
+  .footerContent {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+  .footerSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+}
