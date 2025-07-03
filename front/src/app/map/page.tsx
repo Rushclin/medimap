@@ -282,7 +282,7 @@ const MapContent = () => { // <--- RENOMMÉ ICI
                     {facilities.map((facility) => (
                         <div
                             key={facility.id}
-                            className={`border p-4 rounded-sm cursor-pointer hover:border-blue-600 transition-all ${selectedFacility?.id === facility.id ? 'border-blue-600 bg-blue-50' : ''}`}
+                            className={`border my-2 p-4 rounded-sm cursor-pointer hover:border-blue-600 transition-all ${selectedFacility?.id === facility.id ? 'border-blue-600 bg-blue-50' : ''}`}
                             onClick={() => handleFacilityClick(facility)}
                         >
                             <div className='flex justify-between w-full'>

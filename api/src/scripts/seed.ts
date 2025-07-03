@@ -3,7 +3,7 @@ import { PrismaClient, FacilityType, WeekDay } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
-  await prisma.healthFacility.deleteMany();
+  // await prisma.healthFacility.deleteMany();
   await prisma.$transaction([
     prisma.favorite.deleteMany(),
     prisma.stock.deleteMany(),
