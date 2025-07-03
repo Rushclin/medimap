@@ -17,7 +17,7 @@ import {Locate, Search} from "lucide-react"
 
 const SearchComponent = ({
   onSearch,
-  onNearbySearch
+  onNearbySearch,
 }: {
   onSearch: (query: string) => void;
   onNearbySearch: (query: string, userPos: { lat: number; lng: number }) => void;
@@ -64,7 +64,11 @@ const SearchComponent = ({
         type="text"
         placeholder="Effectuez une recherche de pharmacie ou d'hôpital"
         value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
+        onChange={(e) => {
+          setSearchQuery(e.target.value);
+        onSearch(e.target.value)
+        }
+        }
         onKeyPress={handleKeyPress}
         className="pr-12" // Ajouter du padding pour le bouton
       />
@@ -218,16 +222,30 @@ const MapContent = () => { // <--- RENOMMÉ ICI
         );
     }
 
-      const handleSearch = (query: string) => {
-    if (!query) {
-      setFilteredFacilities(facilities);
+      const handleSearch = async (query: string) => {
+    if (!query || query.trim().length===0) {
+      // setFilteredFacilities(facilities);
+      axiosInstance.get("/facilities").then(({ data }) => {
+            setFacilities(data);
+        }).catch(err => {
+            console.error(err);
+        });
       return;
     }
-    const results = facilities.filter(facility =>
-      facility.name.toLowerCase().includes(query.toLowerCase()) ||
-      facility.address.toLowerCase().includes(query.toLowerCase())
-    );
-    setFilteredFacilities(results);
+    await axiosInstance.get(`/facilities/search`, {
+      params: {
+        name: query
+      }
+    }).then((res) => {
+      setFacilities(res.data)
+    }).catch(err => {
+      console.error(err)
+    })
+    // const results = facilities.filter(facility =>
+    //   facility.name.toLowerCase().includes(query.toLowerCase()) ||
+    //   facility.address.toLowerCase().includes(query.toLowerCase())
+    // );
+    // setFilteredFacilities(results);
   };
 
   // Fonction de recherche proche
@@ -263,15 +281,6 @@ const MapContent = () => { // <--- RENOMMÉ ICI
     return (
         <div className='m-5'>
             <div className='my-5'>
-                {/* <div className='flex justify-center my-4'>
-                    <Logo />
-                </div> */}
-                {/* <div className="sm:col-span-1">
-                    <Input
-                        type="text"
-                        placeholder="Effectuez une recherche de pharmacie ou d'hopital"
-                    />
-                </div> */}
                    <SearchComponent
           onSearch={handleSearch}
           onNearbySearch={handleNearbySearch}

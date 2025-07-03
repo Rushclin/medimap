@@ -24,4 +24,13 @@ export class FacilitiesController {
   ) {
     return this.facilitiesService.findNearby(lat, lng, radius);
   }
+  
+  @Get('/search')
+  searchByName(
+    @Query('name') name: string,
+    @Query('limit') limit?: number,
+    @Query('type') type?: FacilityType
+  ) {
+    return this.facilitiesService.searchByName(name, limit, type);
+  }
 }

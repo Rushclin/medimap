@@ -66,4 +66,33 @@ export class FacilitiesService {
   private toRad(value: number) {
     return value * Math.PI / 180;
   }
+
+  async searchByName(
+    name: string,
+    limit: number = 10,
+    type?: FacilityType
+  ) {
+    return this.prisma.healthFacility.findMany({
+      where: {
+        name: {
+          contains: name,
+          // mode: 'insensitive' // Recherche insensible à la casse
+        },
+        ...(type && { type }) // Filtre optionnel par type
+      },
+      take: limit, // Limite optionnelle des résultats
+      include: {
+        openingHours: true,
+        doctors: true,
+        stocks: {
+          include: {
+            medication: true
+          }
+        }
+      },
+      orderBy: {
+        name: 'asc' // Tri alphabétique
+      }
+    });
+  }
 }
