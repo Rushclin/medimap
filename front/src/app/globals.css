@@ -63,3 +63,32 @@ ul {
   padding: 0;
   margin: 0;
 }
+
+@font-face {
+  font-family: "Recoleta";
+  src: url("/fonts/recoleta/Recoleta-Regular.ttf");
+  font-display: swap;
+  font-weight: 400;
+}
+@font-face {
+  font-family: "Recoleta";
+  src: url("/fonts/recoleta/Recoleta-Medium.ttf");
+  font-display: swap;
+  font-weight: 500;
+}
+@font-face {
+  font-family: "Recoleta";
+  src: url("/fonts/recoleta/Recoleta-SemiBold.ttf");
+  font-display: swap;
+  font-weight: 600;
+}
+@font-face {
+  font-family: "Recoleta";
+  src: url("/fonts/recoleta/Recoleta-Bold.ttf");
+  font-display: swap;
+  font-weight: 700;
+}
+
+.recoleta {
+  font-family: "Recoleta";
+}

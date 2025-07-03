@@ -263,9 +263,9 @@ const MapContent = () => { // <--- RENOMMÉ ICI
     return (
         <div className='m-5'>
             <div className='my-5'>
-                <div className='flex justify-center my-4'>
+                {/* <div className='flex justify-center my-4'>
                     <Logo />
-                </div>
+                </div> */}
                 {/* <div className="sm:col-span-1">
                     <Input
                         type="text"

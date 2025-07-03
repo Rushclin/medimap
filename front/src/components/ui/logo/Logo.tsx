@@ -11,12 +11,13 @@ interface LogoProps {
 const Logo: React.FC<LogoProps> = ({withDescription=false, withVersion=false }) => {
     return (
         <div className="flex flex-col items-center max-w-xs">
-            <Link href="/" className="block mb-4">
+            <Link href="/" className="block">
                 <Image
-                    width={131}
+                    width={50}
                     height={48}
                     src="/favicon.jpeg"
                     alt={appConfig.appName}
+                    className='rounded-full'
                 />
             </Link>
             {

@@ -1,16 +1,17 @@
 import React from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import styles from '../../styles/layout.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFacebookF, faTwitter, faInstagram, faLinkedinIn } from '@fortawesome/free-brands-svg-icons';
+import Logo from '../ui/logo/Logo';
 
 const Footer: React.FC = () => {
   return (
     <footer className={styles.footer}>
       <div className={styles.footerContent}>
         <div className={styles.footerSection}>
-          <Image src="/medimap-logo.svg" alt="Medimap Logo" width={120} height={35} />
+          {/* <Image src="/medimap-logo.svg" alt="Medimap Logo" width={120} height={35} /> */}
+          <Logo/>
           <p className={styles.footerDescription}>Votre guide indispensable pour trouver rapidement la pharmacie et les produits dont vous avez besoin, près de chez vous.</p>
           <div className={styles.socialLinks}>
             <a href="https://facebook.com/medimap" target="_blank" rel="noopener noreferrer"><FontAwesomeIcon icon={faFacebookF} /></a>
